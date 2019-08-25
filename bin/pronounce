@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+
+const http = require('http')
+const fs = require('fs')
+const filenamify = require('filenamify')
+const player = require('play-sound')({})
+
+function pronounce (word) {
+  if (!word) return console.error('word can not be empty!')
+  const tmp_file = `${require('os').tmpdir()}/pronounce_${filenamify(word)}.mp3`
+  if (fs.existsSync(tmp_file)) {
+    player.play(tmp_file, err => err && console.error(err))
+  } else {
+    const uri = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word)}&type=2`
+    http.get(uri, response => {
+      const { statusCode } = response
+      if (statusCode !== 200) throw new Error('Request Failed.\n' + `Status Code: ${statusCode}`)
+      response.pipe(fs.createWriteStream(tmp_file))
+      player.play(tmp_file, err => err && console.error(err))
+    })
+  }
+}
+
+const word = process.argv.slice(2).join(' ')
+pronounce(word)
