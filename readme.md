@@ -15,7 +15,7 @@ $ npm i -g pronounce
 have fun!
 
 ### If you want another name instead of `pronounce` you can manual install:
-- git clone `git@github.com:iwestlin/pronounce.git` && `cd pronounce`
+- `git clone git@github.com:iwestlin/pronounce.git` && `cd pronounce`
 - edit `package.json`:
 ```
   "bin": {
