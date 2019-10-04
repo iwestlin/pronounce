@@ -12,16 +12,23 @@ function pronounce (word) {
     player.play(tmp_file, err => err && console.error(err))
   } else {
     const uri = `http://dict.youdao.com/dictvoice?audio=${encodeURIComponent(word)}&type=2`
-    http.get(uri, response => {
+    const file = fs.createWriteStream(tmp_file)
+    const req = http.get(uri, response => {
       const { statusCode } = response
       if (statusCode !== 200) throw new Error('Request Failed.\n' + `Status Code: ${statusCode}`)
-      const file = fs.createWriteStream(tmp_file)
       response.pipe(file)
-      file.on('finish', () => {
+      response.on('end', () => {
         file.close(() => {
           player.play(tmp_file, err => err && console.error(err))
         })
       })
+    })
+    req.setTimeout(3000, function () {
+      console.error('fail to download mp3 file: timeout of 3000ms')
+      file.close()
+      fs.unlinkSync(tmp_file)
+      req.end()
+      process.exit(1)
     })
   }
 }
