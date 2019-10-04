@@ -1,6 +1,6 @@
 {
   "name": "pronounce",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "pronounce word in command line",
   "main": "index.js",
   "scripts": {
